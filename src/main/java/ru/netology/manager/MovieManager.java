@@ -1,47 +1,47 @@
 package ru.netology.manager;
 import ru.netology.domain.PurchaseItem;
+import ru.netology.repository.MovieRepository;
 
-public class MovieManager { private PurchaseItem[] items = new PurchaseItem[0];
+public class MovieManager {
+    private MovieRepository repository;
     private int defaultafishalength = 10;
     private int afishaLength;
 
-    public MovieManager() {
+    public MovieManager(MovieRepository repository) {
+        this.repository = repository;
     }
 
-    public MovieManager(int afishaLength) {
+    public MovieManager(MovieRepository repository, int afishaLength) {
+        this.repository = repository;
         this.afishaLength = afishaLength;
     }
 
+    public MovieManager() {
 
-    public void add(PurchaseItem item) {
-        // создаём новый массив размером на единицу больше
-        int length = items.length + 1;
-        PurchaseItem[] tmp = new PurchaseItem[length];
-        // копируем поэлементно
-        System.arraycopy(items, 0, tmp, 0, items.length);
-        // кладём последним наш элемент
-        int lastIndex = tmp.length - 1;
-        tmp[lastIndex] = item;
-        items = tmp;
+    }
+
+    public void filmAdd(PurchaseItem item) {
+        repository.save(item);
     }
 
     public PurchaseItem[] getAll() {
-        int askedFilms = items.length;
+        PurchaseItem [] itemsInRepo = repository.findAll();
+        int askedFilms = itemsInRepo.length;
 
         if (afishaLength <= 0) {
-            if (defaultafishalength < items.length) {
+            if (defaultafishalength < itemsInRepo.length) {
                 askedFilms = defaultafishalength;
             }
         } else {
-            if (afishaLength < items.length) {
+            if (afishaLength < itemsInRepo.length) {
                 askedFilms = afishaLength;
             }
         }
 
         PurchaseItem[] result = new PurchaseItem[askedFilms];
         for (int i = 0; i < result.length; i++) {
-            int index = items.length - i - 1;
-            result[i] = items[index];
+            int index = itemsInRepo.length - i - 1;
+            result[i] = itemsInRepo[index];
         }
         return result;
     }
